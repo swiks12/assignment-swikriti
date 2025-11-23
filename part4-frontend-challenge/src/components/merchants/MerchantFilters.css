@@ -24,19 +24,19 @@
 
 .merchant-filters-clear-btn {
   padding: 0.5rem 1rem;
-  background-color: #f1f5f9;
-  border: 1px solid #cbd5e1;
+  background-color: #2424a3;
   border-radius: 6px;
-  color: #475569;
+  color: white;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  border: none;
 }
 
 .merchant-filters-clear-btn:hover {
-  background-color: #e2e8f0;
-  border-color: #94a3b8;
+  background-color: #6969D0;
+  color: white;
 }
 
 /* Filters Grid */
