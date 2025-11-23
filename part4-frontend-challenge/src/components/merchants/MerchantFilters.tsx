@@ -1,49 +1,31 @@
 import { useState } from "react";
 import { Input } from "../common/Input";
+import { Button } from "../common/Button";
 import "./MerchantFilters.css";
 
 interface MerchantFiltersProps {
-  onFilterChange: (filters: {
-    searchName: string;
-    searchId: string;
-    sortBy: string;
-  }) => void;
+  onSearch: (filters: { searchName: string; searchId: string }) => void;
+  onClear: () => void;
 }
 
-const MerchantFilters = ({ onFilterChange }: MerchantFiltersProps) => {
+const MerchantFilters = ({ onSearch, onClear }: MerchantFiltersProps) => {
   const [searchName, setSearchName] = useState("");
   const [searchId, setSearchId] = useState("");
-  const [sortBy, setSortBy] = useState("name-asc");
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchName(value);
-    onFilterChange({ searchName: value, searchId, sortBy });
-  };
-
-  const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchId(value);
-    onFilterChange({ searchName, searchId: value, sortBy });
-  };
-
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    setSortBy(value);
-    onFilterChange({ searchName, searchId, sortBy: value });
+  const handleSearch = () => {
+    onSearch({ searchName, searchId });
   };
 
   const handleClearFilters = () => {
     setSearchName("");
     setSearchId("");
-    setSortBy("name-asc");
-    onFilterChange({ searchName: "", searchId: "", sortBy: "name-asc" });
+    onClear();
   };
 
   return (
     <div className="merchant-filters">
       <div className="merchant-filters-header">
-        <h3 className="merchant-filters-title">🔍 Filter & Sort</h3>
+        <h3 className="merchant-filters-title">🔍 Search Merchants</h3>
         <button
           className="merchant-filters-clear-btn"
           onClick={handleClearFilters}
@@ -59,7 +41,7 @@ const MerchantFilters = ({ onFilterChange }: MerchantFiltersProps) => {
             name="searchName"
             type="text"
             value={searchName}
-            onChange={handleNameChange}
+            onChange={(e) => setSearchName(e.target.value)}
             placeholder="Enter merchant or business name..."
           />
         </div>
@@ -70,23 +52,20 @@ const MerchantFilters = ({ onFilterChange }: MerchantFiltersProps) => {
             name="searchId"
             type="text"
             value={searchId}
-            onChange={handleIdChange}
+            onChange={(e) => setSearchId(e.target.value)}
             placeholder="Enter merchant ID..."
           />
         </div>
 
-        <div className="merchant-filter-item">
-          <label className="merchant-filter-label">Sort By</label>
-          <select
-            className="merchant-filter-select"
-            value={sortBy}
-            onChange={handleSortChange}
+        <div className="merchant-filter-item merchant-filter-button">
+          <Button
+            variant="primary"
+            size="medium"
+            onClick={handleSearch}
+            className="merchant-search-btn"
           >
-            <option value="name-asc">Name (A-Z)</option>
-            <option value="name-desc">Name (Z-A)</option>
-            <option value="id-asc">ID (Low to High)</option>
-            <option value="id-desc">ID (High to Low)</option>
-          </select>
+            Search
+          </Button>
         </div>
       </div>
     </div>

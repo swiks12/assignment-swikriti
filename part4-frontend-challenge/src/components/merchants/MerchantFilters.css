@@ -35,20 +35,35 @@
 }
 
 .merchant-filters-clear-btn:hover {
-  background-color: #6969D0;
+  background-color: #6969d0;
   color: white;
 }
 
 /* Filters Grid */
 .merchant-filters-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: 1fr 1fr auto;
   gap: 1.25rem;
+  align-items: end;
 }
 
 .merchant-filter-item {
   display: flex;
   flex-direction: column;
+}
+
+.merchant-filter-button {
+  margin-bottom: 0;
+}
+
+.merchant-search-btn {
+  white-space: nowrap;
+  background-color: #2424a3;
+}
+
+.merchant-search-btn:hover {
+  background-color: #6969d0;
+  color: white;
 }
 
 /* Filter Label */
@@ -84,7 +99,15 @@
 /* Responsive Design - Tablet */
 @media (max-width: 1024px) {
   .merchant-filters-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .merchant-filter-button {
+    grid-column: 1 / -1;
+  }
+
+  .merchant-search-btn {
+    width: 100%;
   }
 }
 
@@ -107,6 +130,14 @@
   .merchant-filters-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
+  }
+
+  .merchant-filter-button {
+    grid-column: 1;
+  }
+
+  .merchant-search-btn {
+    width: 100%;
   }
 }
 
