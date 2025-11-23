@@ -86,6 +86,9 @@ const MerchantForm = ({
     if (!formData.phone.trim()) {
       newErrors.phone = "Please enter phone number";
       isValid = false;
+    } else if (formData.phone.replace(/\D/g, "").length > 10) {
+      newErrors.phone = "Phone number cannot exceed 10 digits";
+      isValid = false;
     }
 
     // Validate business name
@@ -237,7 +240,7 @@ const MerchantForm = ({
                     type="tel"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    placeholder="+977 98XXXXXXXX"
+                    placeholder="98XXXXXXXX"
                     error={errors.phone}
                   />
                 </div>
