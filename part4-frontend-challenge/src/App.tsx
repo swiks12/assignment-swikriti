@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { Header } from "./components/layout/Header";
 import { Transactions } from "./pages/Transactions";
 import { Merchants } from "./pages/Merchants";
+import { MerchantDetails } from "./pages/MerchantDetails";
 import { UpdateMerchant } from "./pages/UpdateMerchant";
 import { Reports } from "./pages/Reports";
 import "./App.css";
@@ -17,6 +18,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Transactions />} />
           <Route path="/merchants" element={<Merchants />} />
+          <Route path="/merchants/:id" element={<MerchantDetails />} />
           <Route path="/merchants/update/:id" element={<UpdateMerchant />} />
           <Route path="/reports" element={<Reports />} />
         </Routes>
