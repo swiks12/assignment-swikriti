@@ -13,7 +13,7 @@
   align-items: flex-start;
   gap: 1rem;
   margin-bottom: 2rem;
-  border-bottom: 2px solid #2424a3;
+  border-bottom: #e0e2e3 solid 2px;
 }
 
 .update-merchant-header h1 {
