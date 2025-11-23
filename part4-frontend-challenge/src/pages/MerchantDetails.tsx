@@ -11,13 +11,18 @@ import "./MerchantDetails.css";
 
 export const MerchantDetails = () => {
   const { id } = useParams<{ id: string }>();
-//   const  id  ='MCH-00001';
   const navigate = useNavigate();
 
   const [merchant, setMerchant] = useState<Merchant | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const formatMerchantId = (merchantId: string | number): string => {
+    const numericId =
+      typeof merchantId === "string" ? parseInt(merchantId) : merchantId;
+    return `MCH-${String(numericId).padStart(5, "0")}`;
+  };
 
   // Transaction statistics
   const [stats, setStats] = useState({
@@ -40,9 +45,12 @@ export const MerchantDetails = () => {
         const merchantData = await getMerchantById(id);
         setMerchant(merchantData);
 
-        // Fetch transactions
+        // Format merchant ID for transaction API (converts 1 to MCH-00001)
+        const formattedMerchantId = formatMerchantId(id);
+
+        // Fetch transactions using formatted merchant ID
         try {
-          const transactionData = await getTransactions(id, {
+          const transactionData = await getTransactions(formattedMerchantId, {
             page: 0,
             size: 10,
             startDate: "",
@@ -128,8 +136,8 @@ export const MerchantDetails = () => {
       txn.amount,
       txn.currency,
       txn.status,
-      txn.timestamp,
       txn.cardType,
+      txn.localTxnDateTime
     ]);
 
     const csvContent = [
@@ -325,7 +333,7 @@ export const MerchantDetails = () => {
                     <td>
                       {txn.cardType} ****{txn.cardLast4}
                     </td>
-                    <td className="date">{formatDate(txn.timestamp)}</td>
+                    <td className="date">{formatDate(txn.localTxnDateTime)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -356,7 +364,7 @@ export const MerchantDetails = () => {
             <div key={txn.txnId} className="timeline-item">
               <div className={`timeline-dot timeline-dot-${txn.status}`}></div>
               <div className="timeline-content">
-                <div className="timeline-time">{formatDate(txn.timestamp)}</div>
+                <div className="timeline-time">{formatDate(txn.localTxnDateTime)}</div>
                 <div className="timeline-title">
                   Transaction {txn.status} - {formatCurrency(txn.amount)}
                 </div>

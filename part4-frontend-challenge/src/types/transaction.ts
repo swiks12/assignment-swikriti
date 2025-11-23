@@ -5,7 +5,7 @@ export interface Transaction {
   amount: number;
   currency: string;
   status: 'completed' | 'pending' | 'failed' | 'reversed';
-  timestamp: string;
+  localTxnDateTime: string;
   cardType: string;
   cardLast4: string;
   acquirer: string;
