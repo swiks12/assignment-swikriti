@@ -3,6 +3,7 @@ import { Table } from "../common/Table";
 import { useMerchants } from "../../hooks/useMerchants";
 import MerchantFilters from "./MerchantFilters";
 import "./MerchantTable.css";
+import { LoadingSpinner } from "../common/LoadingSpinner";
 
 const MerchantTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -132,7 +133,7 @@ const MerchantTable = () => {
 
       <div className="merchant-table-container">
         {loading && (
-          <div className="merchant-table-loading">Loading merchants...</div>
+          <div className="merchant-table-loading"><LoadingSpinner/></div>
         )}
 
         {error && (

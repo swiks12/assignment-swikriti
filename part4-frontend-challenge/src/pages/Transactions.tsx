@@ -3,6 +3,7 @@ import { FilterState, DEFAULT_FILTERS } from '../types/transaction';
 import { TransactionList } from '../components/common/TransactionList';
 import { TransactionSummary } from '../components/common/TransactionSummary';
 import { useTransactions } from '../hooks/useTransactions';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
 /**
  * Transactions Page Component
@@ -34,7 +35,7 @@ export const Transactions = () => {
 
       {loading && !data && (
         <div className="loading-message" style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>
-          Loading transactions...
+          <LoadingSpinner/>
         </div>
       )}
 
