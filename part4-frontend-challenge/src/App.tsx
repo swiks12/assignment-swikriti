@@ -1,37 +1,25 @@
-import { Routes, Route } from 'react-router-dom';
-import { Header } from './components/layout/Header';
-import { Transactions } from './pages/Transactions';
-import { Merchants } from './pages/Merchants';
-import { Reports } from './pages/Reports';
-import './App.css';
-
-/**
- * Main Application Component
- * 
- * Current status: Basic implementation with data fetching
- * 
- * Implemented:
- * 1. ✅ Data fetching using custom hook
- * 2. ✅ TransactionSummary component
- * 3. ✅ TransactionList component
- * 
- * TODO for junior developer:
- * 1. Add TransactionFilters component
- * 2. Add Pagination component
- * 3. Enhance error handling
- */
+import { Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import { Header } from "./components/layout/Header";
+import { Transactions } from "./pages/Transactions";
+import { Merchants } from "./pages/Merchants";
+import { Reports } from "./pages/Reports";
+import "./App.css";
 
 function App() {
   return (
-    <div className="app">
-      <Header />
-      
-      <Routes>
-        <Route path="/" element={<Transactions />} />
-        <Route path="/merchants" element={<Merchants />} />
-        <Route path="/reports" element={<Reports />} />
-      </Routes>
-    </div>
+    <>
+      <Toaster position="top-center" />
+      <div className="app">
+        <Header />
+
+        <Routes>
+          <Route path="/" element={<Transactions />} />
+          <Route path="/merchants" element={<Merchants />} />
+          <Route path="/reports" element={<Reports />} />
+        </Routes>
+      </div>
+    </>
   );
 }
 

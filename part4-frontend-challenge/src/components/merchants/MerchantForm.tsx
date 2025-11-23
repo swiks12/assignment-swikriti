@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Input } from "../common/Input";
 import { Button } from "../common/Button";
+import { createMerchant } from "../../services/merchantService";
+import toast from "react-hot-toast";
 import "./MerchantForm.css";
 
 interface MerchantFormProps {
@@ -12,6 +14,7 @@ interface MerchantFormProps {
 const MerchantForm = ({
   isModalOpen,
   setIsModalOpen,
+  onMerchantCreated,
 }: MerchantFormProps) => {
   const [formData, setFormData] = useState({
     // Personal Details
@@ -34,6 +37,7 @@ const MerchantForm = ({
   });
 
   const [touched, setTouched] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -48,6 +52,121 @@ const MerchantForm = ({
         ...prev,
         [name]: "",
       }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      name: "",
+      email: "",
+      phone: "",
+      businessName: "",
+      category: "",
+      pan: "",
+    };
+
+    let isValid = true;
+
+    // Validate name
+    if (!formData.name.trim()) {
+      newErrors.name = "Please enter name";
+      isValid = false;
+    }
+
+    // Validate email
+    if (!formData.email.trim()) {
+      newErrors.email = "Please enter email";
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email";
+      isValid = false;
+    }
+
+    // Validate phone
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Please enter phone number";
+      isValid = false;
+    }
+
+    // Validate business name
+    if (!formData.businessName.trim()) {
+      newErrors.businessName = "Please enter business name";
+      isValid = false;
+    }
+
+    // Validate category
+    if (!formData.category.trim()) {
+      newErrors.category = "Please enter category";
+      isValid = false;
+    }
+
+    // Validate PAN
+    if (!formData.pan.trim()) {
+      newErrors.pan = "Please enter PAN";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setTouched(true);
+
+    if (validateForm()) {
+      try {
+        setIsSubmitting(true);
+
+        // Make API call to create merchant
+        const response = await createMerchant({
+          ...formData,
+          status: "active",
+        });
+
+        console.log("Merchant created successfully:", response);
+
+        // Show success message
+        toast.success(response.message || "Merchant created successfully!");
+
+        // Reset form
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          businessName: "",
+          category: "",
+          pan: "",
+        });
+        setErrors({
+          name: "",
+          email: "",
+          phone: "",
+          businessName: "",
+          category: "",
+          pan: "",
+        });
+        setTouched(false);
+
+        // Close modal
+        setIsModalOpen(false);
+
+        // Call callback to reload the table
+        if (onMerchantCreated) {
+          onMerchantCreated();
+        }
+      } catch (error: any) {
+        console.error("Failed to create merchant:", error);
+
+        // Show specific error message from backend
+        if (error.response?.data?.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error("rchanFailed to create merchant. Please try again.");
+        }
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -89,7 +208,7 @@ const MerchantForm = ({
               </button>
             </div>
 
-            <form className="merchant-form">
+            <form onSubmit={handleSubmit} className="merchant-form">
               {/* Personal Details Section */}
               <div className="form-section">
                 <h3 className="form-section-title">Personal Details</h3>
@@ -167,6 +286,7 @@ const MerchantForm = ({
                   variant="outline"
                   onClick={handleCloseModal}
                   className="cancel-btn"
+                  disabled={isSubmitting}
                 >
                   Cancel
                 </Button>
@@ -174,8 +294,9 @@ const MerchantForm = ({
                   type="submit"
                   variant="primary"
                   className="submit-btn"
+                  disabled={isSubmitting}
                 >
-                    Create Merchant
+                  {isSubmitting ? "Creating..." : "Create Merchant"}
                 </Button>
               </div>
             </form>
