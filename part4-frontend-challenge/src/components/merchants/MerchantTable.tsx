@@ -2,60 +2,120 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table } from "../common/Table";
 import { useMerchants } from "../../hooks/useMerchants";
+import { searchMerchants } from "../../services/merchantService";
 import MerchantFilters from "./MerchantFilters";
 import "./MerchantTable.css";
 import { LoadingSpinner } from "../common/LoadingSpinner";
+import { Merchant } from "../../types/merchant";
 
 const MerchantTable = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const [filters, setFilters] = useState({
+  const [sortBy, setSortBy] = useState("");
+  const [isSearchMode, setIsSearchMode] = useState(false);
+  const [searchResults, setSearchResults] = useState<Merchant[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState<Error | null>(null);
+  const [searchTotalPages, setSearchTotalPages] = useState(1);
+  const [searchTotalItems, setSearchTotalItems] = useState(0);
+  const [activeSearchFilters, setActiveSearchFilters] = useState({
     searchName: "",
     searchId: "",
-    sortBy: "latest",
   });
 
-  // Fetch merchants using the custom hook
+  // Fetch merchants using the custom hook (for initial load and non-search mode)
   const { merchants, loading, error, totalPages, totalItems } = useMerchants({
     page: currentPage,
     limit: itemsPerPage,
   });
 
-  // Filter and sort merchants
-  const filteredAndSortedMerchants = useMemo(() => {
-    let filtered = [...merchants];
-
-    // Filter by name (searches both name and business name)
-    if (filters.searchName) {
-      const searchLower = filters.searchName.toLowerCase();
-      filtered = filtered.filter(
-        (m) =>
-          m.name.toLowerCase().includes(searchLower) ||
-          m.businessName.toLowerCase().includes(searchLower)
-      );
+  // Handle search
+  const handleSearch = async (filters: {
+    searchName: string;
+    searchId: string;
+  }) => {
+    // If both filters are empty, switch back to regular mode
+    if (!filters.searchName.trim() && !filters.searchId.trim()) {
+      setIsSearchMode(false);
+      setCurrentPage(1);
+      return;
     }
 
-    // Filter by ID
-    if (filters.searchId) {
-      filtered = filtered.filter((m) =>
-        m.merchantId.toString().includes(filters.searchId)
-      );
-    }
+    setIsSearchMode(true);
+    setSearchLoading(true);
+    setSearchError(null);
+    setActiveSearchFilters(filters);
+    setCurrentPage(1);
 
-    // Sort merchants
-    filtered.sort((a, b) => {
-      switch (filters.sortBy) {
-        case "latest":
-          return (
-            new Date(b.createdAt || 0).getTime() -
-            new Date(a.createdAt || 0).getTime()
-          );
-        case "oldest":
-          return (
-            new Date(a.createdAt || 0).getTime() -
-            new Date(b.createdAt || 0).getTime()
-          );
+    try {
+      const response = await searchMerchants({
+        searchName: filters.searchName,
+        searchId: filters.searchId,
+        page: 1,
+        limit: itemsPerPage,
+      });
+
+      setSearchResults(response.data);
+      setSearchTotalPages(response.totalPages);
+      setSearchTotalItems(response.totalItems);
+    } catch (err) {
+      setSearchError(err as Error);
+      setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  // Handle clear filters
+  const handleClearFilters = () => {
+    setIsSearchMode(false);
+    setSearchResults([]);
+    setActiveSearchFilters({ searchName: "", searchId: "" });
+    setCurrentPage(1);
+  };
+
+  // Handle search pagination
+  const handleSearchPageChange = async (page: number) => {
+    if (!isSearchMode) return;
+
+    setSearchLoading(true);
+    setSearchError(null);
+
+    try {
+      const response = await searchMerchants({
+        searchName: activeSearchFilters.searchName,
+        searchId: activeSearchFilters.searchId,
+        page: page,
+        limit: itemsPerPage,
+      });
+
+      setSearchResults(response.data);
+      setSearchTotalPages(response.totalPages);
+      setSearchTotalItems(response.totalItems);
+      setCurrentPage(page);
+    } catch (err) {
+      setSearchError(err as Error);
+      setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  // Determine which data source to use
+  const currentMerchants = isSearchMode ? searchResults : merchants;
+  const currentLoading = isSearchMode ? searchLoading : loading;
+  const currentError = isSearchMode ? searchError : error;
+  const currentTotalPages = isSearchMode ? searchTotalPages : totalPages;
+  const currentTotalItems = isSearchMode ? searchTotalItems : totalItems;
+
+  // Sort merchants
+  const sortedMerchants = useMemo(() => {
+    const sorted = [...currentMerchants];
+
+    sorted.sort((a, b) => {
+      switch (sortBy) {
+        
         case "name-asc":
           return a.name.localeCompare(b.name);
         case "name-desc":
@@ -69,28 +129,33 @@ const MerchantTable = () => {
       }
     });
 
-    return filtered;
-  }, [merchants, filters]);
-
-  const handleFilterChange = (newFilters: {
-    searchName: string;
-    searchId: string;
-    sortBy: string;
-  }) => {
-    setFilters(newFilters);
-    setCurrentPage(1); // Reset to first page when filters change
-  };
+    return sorted;
+  }, [currentMerchants, sortBy]);
 
   const handlePreviousPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
+    const newPage = Math.max(currentPage - 1, 1);
+    if (isSearchMode) {
+      handleSearchPageChange(newPage);
+    } else {
+      setCurrentPage(newPage);
+    }
   };
 
   const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    const newPage = Math.min(currentPage + 1, currentTotalPages);
+    if (isSearchMode) {
+      handleSearchPageChange(newPage);
+    } else {
+      setCurrentPage(newPage);
+    }
   };
 
   const handlePageClick = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
+    if (isSearchMode) {
+      handleSearchPageChange(pageNumber);
+    } else {
+      setCurrentPage(pageNumber);
+    }
   };
 
   const handleRowClick = (merchantId: number) => {
@@ -102,8 +167,8 @@ const MerchantTable = () => {
     const pages = [];
     const maxPagesToShow = 5;
 
-    if (totalPages <= maxPagesToShow) {
-      for (let i = 1; i <= totalPages; i++) {
+    if (currentTotalPages <= maxPagesToShow) {
+      for (let i = 1; i <= currentTotalPages; i++) {
         pages.push(i);
       }
     } else {
@@ -112,11 +177,11 @@ const MerchantTable = () => {
           pages.push(i);
         }
         pages.push("...");
-        pages.push(totalPages);
-      } else if (currentPage >= totalPages - 2) {
+        pages.push(currentTotalPages);
+      } else if (currentPage >= currentTotalPages - 2) {
         pages.push(1);
         pages.push("...");
-        for (let i = totalPages - 3; i <= totalPages; i++) {
+        for (let i = currentTotalPages - 3; i <= currentTotalPages; i++) {
           pages.push(i);
         }
       } else {
@@ -126,7 +191,7 @@ const MerchantTable = () => {
         pages.push(currentPage);
         pages.push(currentPage + 1);
         pages.push("...");
-        pages.push(totalPages);
+        pages.push(currentTotalPages);
       }
     }
 
@@ -135,22 +200,39 @@ const MerchantTable = () => {
 
   return (
     <>
-      <MerchantFilters onFilterChange={handleFilterChange} />
+      <MerchantFilters onSearch={handleSearch} onClear={handleClearFilters} />
+
+      {/* Sorting Controls */}
+      <div className="merchant-table-controls">
+        <div className="merchant-sort-section">
+          <label className="merchant-sort-label">Sort By:</label>
+          <select
+            className="merchant-sort-select"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="name-asc">Name (A-Z)</option>
+            <option value="name-desc">Name (Z-A)</option>
+            <option value="id-asc">ID (Low to High)</option>
+            <option value="id-desc">ID (High to Low)</option>
+          </select>
+        </div>
+      </div>
 
       <div className="merchant-table-container">
-        {loading && (
+        {currentLoading && (
           <div className="merchant-table-loading">
             <LoadingSpinner />
           </div>
         )}
 
-        {error && (
+        {currentError && (
           <div className="merchant-table-error">
-            Error loading merchants: {error.message}
+            Error loading merchants: {currentError.message}
           </div>
         )}
 
-        {!loading && !error && (
+        {!currentLoading && !currentError && (
           <>
             <div className="merchant-table-wrapper">
               <Table>
@@ -167,14 +249,14 @@ const MerchantTable = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredAndSortedMerchants.length === 0 ? (
+                  {sortedMerchants.length === 0 ? (
                     <tr>
                       <td colSpan={8} className="merchant-table-empty">
                         No merchants found. Try adjusting your filters!
                       </td>
                     </tr>
                   ) : (
-                    filteredAndSortedMerchants.map((merchant) => (
+                    sortedMerchants.map((merchant) => (
                       <tr
                         key={merchant.merchantId}
                         onClick={() => handleRowClick(merchant.merchantId)}
@@ -220,12 +302,12 @@ const MerchantTable = () => {
             </div>
 
             {/* Pagination */}
-            {filteredAndSortedMerchants.length > 0 && totalPages > 1 && (
+            {sortedMerchants.length > 0 && currentTotalPages > 1 && (
               <div className="merchant-pagination">
                 <div className="merchant-pagination-info">
                   Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-                  {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
-                  {totalItems} records
+                  {Math.min(currentPage * itemsPerPage, currentTotalItems)} of{" "}
+                  {currentTotalItems} records
                 </div>
 
                 <div className="merchant-pagination-controls">
@@ -261,7 +343,7 @@ const MerchantTable = () => {
                   <button
                     className="merchant-pagination-btn merchant-pagination-next"
                     onClick={handleNextPage}
-                    disabled={currentPage === totalPages}
+                    disabled={currentPage === currentTotalPages}
                   >
                     Next
                   </button>
