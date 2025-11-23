@@ -120,6 +120,11 @@ const MerchantTable = () => {
     navigate(`/merchants/update/${merchantId}`);
   };
 
+  const handleViewDetails = (e: React.MouseEvent, merchantId: number) => {
+    e.stopPropagation(); // Prevent row click from firing
+    navigate(`/merchants/${merchantId}`);
+  };
+
   // Generate page numbers to display
   const getPageNumbers = () => {
     const pages = [];
@@ -204,12 +209,13 @@ const MerchantTable = () => {
                     <th>Category</th>
                     <th>Status</th>
                     <th>PAN</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sortedMerchants.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="merchant-table-empty">
+                      <td colSpan={9} className="merchant-table-empty">
                         No merchants found. Try adjusting your filters!
                       </td>
                     </tr>
@@ -251,6 +257,16 @@ const MerchantTable = () => {
                         </td>
                         <td className="merchant-table-cell-pan">
                           {merchant.pan}
+                        </td>
+                        <td className="merchant-table-cell-actions">
+                          <button
+                            className="merchant-view-details-btn"
+                            onClick={(e) =>
+                              handleViewDetails(e, merchant.merchantId)
+                            }
+                          >
+                            View Details
+                          </button>
                         </td>
                       </tr>
                     ))

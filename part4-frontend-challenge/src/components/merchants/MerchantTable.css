@@ -181,6 +181,34 @@
   color: #991b1b;
 }
 
+/* Actions Column */
+.merchant-table-cell-actions {
+  text-align: center;
+}
+
+.merchant-view-details-btn {
+  padding: 0.5rem 1rem;
+  background-color: #2424a3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.merchant-view-details-btn:hover {
+  background-color: #1a1a7a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(36, 36, 163, 0.2);
+}
+
+.merchant-view-details-btn:active {
+  transform: translateY(0);
+}
+
 /* Pagination Container */
 .merchant-pagination {
   display: flex;
