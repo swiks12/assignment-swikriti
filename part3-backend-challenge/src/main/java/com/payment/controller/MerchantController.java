@@ -189,14 +189,53 @@ public class MerchantController {
         summary = "Update merchant",
         description = "Updates an existing merchant's information"
     )
-    public HttpResponse<Merchant> updateMerchant(
+    public HttpResponse<Map<String, Object>> updateMerchant(
             @PathVariable Long id,
             @Body Merchant updatedMerchant
     ) {
-        Optional<Merchant> existingMerchant = merchantRepository.findById(id);
-        
-        if (existingMerchant.isPresent()) {
+        try {
+            Optional<Merchant> existingMerchant = merchantRepository.findById(id);
+            
+            if (!existingMerchant.isPresent()) {
+                return HttpResponse.notFound(Map.of(
+                    "message", "Merchant not found with ID: " + id
+                ));
+            }
+            
             Merchant merchant = existingMerchant.get();
+            
+            // Validate email uniqueness (if email is being updated)
+            if (updatedMerchant.getEmail() != null && !updatedMerchant.getEmail().equals(merchant.getEmail())) {
+                Optional<Merchant> existingEmail = merchantRepository.findByEmail(updatedMerchant.getEmail());
+                if (existingEmail.isPresent()) {
+                    return HttpResponse.badRequest(Map.of(
+                        "message", "Email already exists. Please use a different email address.",
+                        "field", "email"
+                    ));
+                }
+            }
+            
+            // Validate phone uniqueness (if phone is being updated)
+            if (updatedMerchant.getPhone() != null && !updatedMerchant.getPhone().equals(merchant.getPhone())) {
+                Optional<Merchant> existingPhone = merchantRepository.findByPhone(updatedMerchant.getPhone());
+                if (existingPhone.isPresent()) {
+                    return HttpResponse.badRequest(Map.of(
+                        "message", "Phone number already exists. Please use a different phone number.",
+                        "field", "phone"
+                    ));
+                }
+            }
+            
+            // Validate PAN uniqueness (if PAN is being updated)
+            if (updatedMerchant.getPan() != null && !updatedMerchant.getPan().equals(merchant.getPan())) {
+                Optional<Merchant> existingPan = merchantRepository.findByPan(updatedMerchant.getPan());
+                if (existingPan.isPresent()) {
+                    return HttpResponse.badRequest(Map.of(
+                        "message", "PAN already exists. Please use a different PAN.",
+                        "field", "pan"
+                    ));
+                }
+            }
             
             // Update fields
             if (updatedMerchant.getName() != null) {
@@ -223,9 +262,16 @@ public class MerchantController {
             
             // Save updated merchant
             Merchant saved = merchantRepository.update(merchant);
-            return HttpResponse.ok(saved);
-        } else {
-            return HttpResponse.notFound();
+            
+            return HttpResponse.ok(Map.of(
+                "message", "Merchant updated successfully",
+                "data", saved
+            ));
+        } catch (Exception e) {
+            return HttpResponse.serverError(Map.of(
+                "message", "Failed to update merchant. Please try again later.",
+                "error", e.getMessage()
+            ));
         }
     }
 }
