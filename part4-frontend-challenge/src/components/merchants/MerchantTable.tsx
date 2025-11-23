@@ -2,11 +2,9 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table } from "../common/Table";
 import { useMerchants } from "../../hooks/useMerchants";
-import { searchMerchants } from "../../services/merchantService";
 import MerchantFilters from "./MerchantFilters";
 import "./MerchantTable.css";
 import { LoadingSpinner } from "../common/LoadingSpinner";
-import { Merchant } from "../../types/merchant";
 
 const MerchantTable = () => {
   const navigate = useNavigate();
@@ -14,21 +12,17 @@ const MerchantTable = () => {
   const itemsPerPage = 10;
   const [sortBy, setSortBy] = useState("");
   const [isSearchMode, setIsSearchMode] = useState(false);
-  const [searchResults, setSearchResults] = useState<Merchant[]>([]);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [searchError, setSearchError] = useState<Error | null>(null);
-  const [searchTotalPages, setSearchTotalPages] = useState(1);
-  const [searchTotalItems, setSearchTotalItems] = useState(0);
   const [activeSearchFilters, setActiveSearchFilters] = useState({
     searchName: "",
     searchId: "",
   });
 
-  // Fetch merchants using the custom hook (for initial load and non-search mode)
-  const { merchants, loading, error, totalPages, totalItems } = useMerchants({
-    page: currentPage,
-    limit: itemsPerPage,
-  });
+  // Fetch merchants using the custom hook
+  const { merchants, loading, error, totalPages, totalItems, search, refetch } =
+    useMerchants({
+      page: currentPage,
+      limit: itemsPerPage,
+    });
 
   // Handle search
   const handleSearch = async (filters: {
@@ -39,83 +33,47 @@ const MerchantTable = () => {
     if (!filters.searchName.trim() && !filters.searchId.trim()) {
       setIsSearchMode(false);
       setCurrentPage(1);
+      refetch();
       return;
     }
 
     setIsSearchMode(true);
-    setSearchLoading(true);
-    setSearchError(null);
     setActiveSearchFilters(filters);
     setCurrentPage(1);
 
-    try {
-      const response = await searchMerchants({
-        searchName: filters.searchName,
-        searchId: filters.searchId,
-        page: 1,
-        limit: itemsPerPage,
-      });
-
-      setSearchResults(response.data);
-      setSearchTotalPages(response.totalPages);
-      setSearchTotalItems(response.totalItems);
-    } catch (err) {
-      setSearchError(err as Error);
-      setSearchResults([]);
-    } finally {
-      setSearchLoading(false);
-    }
+    await search({
+      searchName: filters.searchName,
+      searchId: filters.searchId,
+      page: 1,
+    });
   };
 
   // Handle clear filters
   const handleClearFilters = () => {
     setIsSearchMode(false);
-    setSearchResults([]);
     setActiveSearchFilters({ searchName: "", searchId: "" });
     setCurrentPage(1);
+    refetch();
   };
 
   // Handle search pagination
   const handleSearchPageChange = async (page: number) => {
     if (!isSearchMode) return;
 
-    setSearchLoading(true);
-    setSearchError(null);
-
-    try {
-      const response = await searchMerchants({
-        searchName: activeSearchFilters.searchName,
-        searchId: activeSearchFilters.searchId,
-        page: page,
-        limit: itemsPerPage,
-      });
-
-      setSearchResults(response.data);
-      setSearchTotalPages(response.totalPages);
-      setSearchTotalItems(response.totalItems);
-      setCurrentPage(page);
-    } catch (err) {
-      setSearchError(err as Error);
-      setSearchResults([]);
-    } finally {
-      setSearchLoading(false);
-    }
+    setCurrentPage(page);
+    await search({
+      searchName: activeSearchFilters.searchName,
+      searchId: activeSearchFilters.searchId,
+      page: page,
+    });
   };
-
-  // Determine which data source to use
-  const currentMerchants = isSearchMode ? searchResults : merchants;
-  const currentLoading = isSearchMode ? searchLoading : loading;
-  const currentError = isSearchMode ? searchError : error;
-  const currentTotalPages = isSearchMode ? searchTotalPages : totalPages;
-  const currentTotalItems = isSearchMode ? searchTotalItems : totalItems;
 
   // Sort merchants
   const sortedMerchants = useMemo(() => {
-    const sorted = [...currentMerchants];
+    const sorted = [...merchants];
 
     sorted.sort((a, b) => {
       switch (sortBy) {
-        
         case "name-asc":
           return a.name.localeCompare(b.name);
         case "name-desc":
@@ -130,7 +88,7 @@ const MerchantTable = () => {
     });
 
     return sorted;
-  }, [currentMerchants, sortBy]);
+  }, [merchants, sortBy]);
 
   const handlePreviousPage = () => {
     const newPage = Math.max(currentPage - 1, 1);
@@ -142,7 +100,7 @@ const MerchantTable = () => {
   };
 
   const handleNextPage = () => {
-    const newPage = Math.min(currentPage + 1, currentTotalPages);
+    const newPage = Math.min(currentPage + 1, totalPages);
     if (isSearchMode) {
       handleSearchPageChange(newPage);
     } else {
@@ -167,8 +125,8 @@ const MerchantTable = () => {
     const pages = [];
     const maxPagesToShow = 5;
 
-    if (currentTotalPages <= maxPagesToShow) {
-      for (let i = 1; i <= currentTotalPages; i++) {
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
@@ -177,11 +135,11 @@ const MerchantTable = () => {
           pages.push(i);
         }
         pages.push("...");
-        pages.push(currentTotalPages);
-      } else if (currentPage >= currentTotalPages - 2) {
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
         pages.push(1);
         pages.push("...");
-        for (let i = currentTotalPages - 3; i <= currentTotalPages; i++) {
+        for (let i = totalPages - 3; i <= totalPages; i++) {
           pages.push(i);
         }
       } else {
@@ -191,7 +149,7 @@ const MerchantTable = () => {
         pages.push(currentPage);
         pages.push(currentPage + 1);
         pages.push("...");
-        pages.push(currentTotalPages);
+        pages.push(totalPages);
       }
     }
 
@@ -220,19 +178,19 @@ const MerchantTable = () => {
       </div>
 
       <div className="merchant-table-container">
-        {currentLoading && (
+        {loading && (
           <div className="merchant-table-loading">
             <LoadingSpinner />
           </div>
         )}
 
-        {currentError && (
+        {error && (
           <div className="merchant-table-error">
-            Error loading merchants: {currentError.message}
+            Error loading merchants: {error.message}
           </div>
         )}
 
-        {!currentLoading && !currentError && (
+        {!loading && !error && (
           <>
             <div className="merchant-table-wrapper">
               <Table>
@@ -302,12 +260,12 @@ const MerchantTable = () => {
             </div>
 
             {/* Pagination */}
-            {sortedMerchants.length > 0 && currentTotalPages > 1 && (
+            {sortedMerchants.length > 0 && totalPages > 1 && (
               <div className="merchant-pagination">
                 <div className="merchant-pagination-info">
                   Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-                  {Math.min(currentPage * itemsPerPage, currentTotalItems)} of{" "}
-                  {currentTotalItems} records
+                  {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
+                  {totalItems} records
                 </div>
 
                 <div className="merchant-pagination-controls">
@@ -343,7 +301,7 @@ const MerchantTable = () => {
                   <button
                     className="merchant-pagination-btn merchant-pagination-next"
                     onClick={handleNextPage}
-                    disabled={currentPage === currentTotalPages}
+                    disabled={currentPage === totalPages}
                   >
                     Next
                   </button>

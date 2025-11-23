@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { getMerchants, createMerchant } from "../services/merchantService";
+import {
+  getMerchants,
+  createMerchant,
+  searchMerchants,
+} from "../services/merchantService";
 import {
   Merchant,
   CreateMerchantRequest,
@@ -17,6 +21,11 @@ interface UseMerchantsResult {
   createNewMerchant: (merchantData: CreateMerchantRequest) => Promise<void>;
   creating: boolean;
   createError: Error | null;
+  search: (searchParams: {
+    searchName?: string;
+    searchId?: string;
+    page?: number;
+  }) => Promise<void>;
 }
 
 /**
@@ -72,6 +81,32 @@ export const useMerchants = (filters?: MerchantFilters): UseMerchantsResult => {
     }
   };
 
+  const search = async (searchParams: {
+    searchName?: string;
+    searchId?: string;
+    page?: number;
+  }) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await searchMerchants({
+        searchName: searchParams.searchName,
+        searchId: searchParams.searchId,
+        page: searchParams.page || 1,
+        limit: filters?.limit || 10,
+      });
+      setMerchants(response.data);
+      setTotalPages(response.totalPages);
+      setCurrentPage(response.page);
+      setTotalItems(response.totalItems);
+    } catch (err) {
+      setError(err as Error);
+      console.error("Error searching merchants:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchMerchants();
   }, [
@@ -93,5 +128,6 @@ export const useMerchants = (filters?: MerchantFilters): UseMerchantsResult => {
     createNewMerchant,
     creating,
     createError,
+    search,
   };
 };
