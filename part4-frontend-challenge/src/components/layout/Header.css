@@ -32,12 +32,12 @@
 }
 
 .header-link:hover {
-  color: #2563eb;
+  color: #2424a3;
 }
 
 .header-link.active {
-  color: #2563eb;
-  border-bottom: 2px solid #2563eb;
+  color: #2424a3;
+  border-bottom: 2px solid #2424a3;
   padding-bottom: 4px;
 }
 
