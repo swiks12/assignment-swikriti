@@ -54,7 +54,7 @@
 
 .profile-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 2rem;
 }
 
@@ -169,7 +169,7 @@
 }
 
 .stat-value {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
 }
