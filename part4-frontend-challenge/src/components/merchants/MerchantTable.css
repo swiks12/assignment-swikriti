@@ -1,0 +1,308 @@
+/* Merchant Table Container */
+.merchant-table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  overflow: hidden;
+}
+
+/* Loading and Error States */
+.merchant-table-loading,
+.merchant-table-error {
+  padding: 3rem 2rem;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.merchant-table-loading {
+  color: #64748b;
+}
+
+.merchant-table-error {
+  color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.merchant-table-empty {
+  text-align: center;
+  padding: 3rem 2rem !important;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Merchant Table Wrapper */
+.merchant-table-wrapper {
+  overflow-x: auto;
+}
+
+.merchant-table-wrapper .table {
+  min-width: 800px;
+}
+
+/* Table Header Styling */
+.merchant-table-wrapper thead {
+  background: #2424a3 !important;
+}
+
+.merchant-table-wrapper th {
+  color: white !important;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  padding: 1rem !important;
+}
+
+/* Table Body Styling */
+.merchant-table-wrapper tbody tr {
+  transition: background-color 0.2s;
+}
+
+.merchant-table-wrapper tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.merchant-table-wrapper td {
+  padding: 1rem;
+  color: #334155;
+  font-size: 0.875rem;
+}
+
+/* Table Cell Specific Styles */
+.merchant-table-cell-id {
+  font-weight: 600;
+  color: #2424a3;
+}
+
+.merchant-table-cell-name {
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.merchant-table-cell-email {
+  color: #64748b;
+}
+
+.merchant-table-cell-phone {
+  font-family: monospace;
+  color: #475569;
+}
+
+.merchant-table-cell-business {
+  font-weight: 500;
+}
+
+/* Category Badge */
+.merchant-category-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background-color: #e0e7ff;
+  color: #3730a3;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Status Badge */
+.merchant-status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+.merchant-status-active {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.merchant-status-inactive {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Pagination Container */
+.merchant-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: #f1f5f9;
+  border-top: 1px solid #e2e8f0;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Pagination Info Text */
+.merchant-pagination-info {
+  color: #64748b;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Pagination Controls Container */
+.merchant-pagination-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Pagination Buttons */
+.merchant-pagination-btn {
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: #334155;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.merchant-pagination-btn:hover:not(:disabled) {
+  background-color: #2424a3;
+  color: white;
+  border-color: #2424a3;
+}
+
+.merchant-pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Pagination Numbers Container */
+.merchant-pagination-numbers {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Pagination Number Buttons */
+.merchant-pagination-number {
+  padding: 0.5rem 0.75rem;
+  background-color: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: #334155;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 40px;
+}
+
+.merchant-pagination-number:hover:not(:disabled) {
+  background-color: #e0e7ff;
+  border-color: #2424a3;
+  color: #2424a3;
+}
+
+.merchant-pagination-active {
+  background-color: #2424a3 !important;
+  color: white !important;
+  border-color: #2424a3 !important;
+}
+
+.merchant-pagination-ellipsis {
+  cursor: default;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+}
+
+.merchant-pagination-ellipsis:hover {
+  background: transparent;
+  border: none;
+}
+
+/* Responsive Design - Tablet */
+@media (max-width: 1024px) {
+  .merchant-table-wrapper .table {
+    min-width: 700px;
+  }
+
+  .merchant-table-wrapper th,
+  .merchant-table-wrapper td {
+    padding: 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* Responsive Design - Mobile */
+@media (max-width: 768px) {
+  .merchant-pagination {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .merchant-pagination-numbers {
+    order: -1;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .merchant-pagination-btn {
+    flex: 1;
+  }
+
+  .merchant-table-wrapper th,
+  .merchant-table-wrapper td {
+    padding: 0.625rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Responsive Design - Small Mobile */
+@media (max-width: 639px) {
+  .merchant-table-container {
+    border-radius: 6px;
+  }
+
+  .merchant-table-wrapper .table {
+    min-width: 600px;
+  }
+
+  .merchant-pagination-number {
+    min-width: 36px;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8125rem;
+  }
+
+  .merchant-category-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+/* Responsive Design - Very Small Mobile */
+@media (max-width: 480px) {
+  .merchant-table-wrapper {
+    border-radius: 0;
+  }
+
+  .merchant-pagination {
+    padding: 0.75rem;
+  }
+
+  .merchant-pagination-btn {
+    font-size: 0.8125rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .merchant-pagination-number {
+    min-width: 32px;
+    padding: 0.35rem 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  /* Hide some page numbers on very small screens */
+  .merchant-pagination-numbers {
+    gap: 0.25rem;
+  }
+}
