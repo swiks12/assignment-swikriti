@@ -1,4 +1,4 @@
-import { get, post } from "./api";
+import { get, post, put } from "./api";
 import {
   Merchant,
   CreateMerchantRequest,
@@ -21,7 +21,7 @@ const MERCHANT_BASE = "/merchants";
  * @returns Promise with merchant list response data
  */
 export const getMerchants = async (
-    filters?: MerchantFilters
+  filters?: MerchantFilters
 ): Promise<MerchantListResponse> => {
   const params = {
     page: filters?.page || 1,
@@ -47,7 +47,7 @@ export const getMerchants = async (
  * @returns Promise with merchant data
  */
 export const getMerchantById = async (
-    merchantId: string
+  merchantId: string
 ): Promise<Merchant> => {
   try {
     const response = await get<Merchant>(`${MERCHANT_BASE}/${merchantId}`);
@@ -65,7 +65,7 @@ export const getMerchantById = async (
  * @returns Promise with created merchant data
  */
 export const createMerchant = async (
-    merchantData: CreateMerchantRequest
+  merchantData: CreateMerchantRequest
 ): Promise<{ message: string; data: CreateMerchantResponse }> => {
   try {
     const response = await post<{
@@ -87,13 +87,13 @@ export const createMerchant = async (
  * @returns Promise with updated merchant data
  */
 export const updateMerchant = async (
-    merchantId: string,
-    merchantData: Partial<CreateMerchantRequest>
-): Promise<Merchant> => {
+  merchantId: string,
+  merchantData: Partial<CreateMerchantRequest>
+): Promise<{ message: string; data: Merchant }> => {
   try {
-    const response = await post<Merchant>(
-        `${MERCHANT_BASE}/${merchantId}`,
-        merchantData
+    const response = await put<{ message: string; data: Merchant }>(
+      `${MERCHANT_BASE}/${merchantId}`,
+      merchantData
     );
     return response;
   } catch (error) {
