@@ -1,0 +1,114 @@
+/* Confirm Dialog Overlay */
+.confirm-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Confirm Dialog Content */
+.confirm-dialog-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+  max-width: 450px;
+  width: 90%;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Confirm Dialog Header */
+.confirm-dialog-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.confirm-dialog-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Confirm Dialog Body */
+.confirm-dialog-body {
+  padding: 1.5rem;
+}
+
+.confirm-dialog-body p {
+  margin: 0;
+  color: #64748b;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Confirm Dialog Actions */
+.confirm-dialog-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  justify-content: flex-end;
+}
+
+/* Confirm Dialog Buttons */
+.confirm-dialog-btn {
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  outline: none;
+}
+
+.confirm-dialog-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.confirm-dialog-btn-cancel {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.confirm-dialog-btn-cancel:hover:not(:disabled) {
+  background-color: #e2e8f0;
+}
+
+.confirm-dialog-btn-confirm {
+  background-color: #2424a3;
+  color: white;
+}
+
+.confirm-dialog-btn-confirm:hover:not(:disabled) {
+  background-color: #1e1e8f;
+}
