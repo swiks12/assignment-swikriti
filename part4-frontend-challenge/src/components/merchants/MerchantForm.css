@@ -1,0 +1,242 @@
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Content */
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #64748b;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.modal-close-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Merchant Form */
+.merchant-form {
+  padding: 2rem;
+}
+
+/* Form Section */
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-section:last-of-type {
+  margin-bottom: 1.5rem;
+}
+
+.form-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+/* Form Grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.cancel-btn {
+  border: 1px solid red;
+  color: red;
+  }
+
+.submit-btn {
+  background-color: #2424a3;
+  color: white;
+}
+
+/* Responsive Design - Tablet and Above */
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .modal-content {
+    max-width: 700px;
+  }
+}
+
+/* Responsive Design - Desktop */
+@media (min-width: 768px) {
+  .modal-header {
+    padding: 2rem 2.5rem;
+  }
+
+  .merchant-form {
+    padding: 2rem 2.5rem;
+  }
+
+  .form-section-title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .modal-content {
+    max-width: 800px;
+  }
+}
+
+/* Responsive Design - Mobile */
+@media (max-width: 639px) {
+  .merchants-page {
+    padding: 1rem;
+  }
+
+  .merchants-header-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .add-merchant-btn {
+    width: 100%;
+  }
+
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .modal-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .modal-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .merchant-form {
+    padding: 1.25rem;
+  }
+
+  .form-section-title {
+    font-size: 1rem;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+}
+
+/* Responsive Design - Small Mobile */
+@media (max-width: 374px) {
+  .merchants-page {
+    padding: 0.75rem;
+  }
+
+  .modal-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .modal-header h2 {
+    font-size: 1.125rem;
+  }
+
+  .merchant-form {
+    padding: 1rem;
+  }
+
+  .form-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-grid {
+    gap: 1rem;
+  }
+}
