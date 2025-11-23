@@ -58,6 +58,10 @@
   transition: background-color 0.2s;
 }
 
+.merchant-table-row-clickable {
+  cursor: pointer;
+}
+
 .merchant-table-wrapper tbody tr:hover {
   background-color: #f8fafc;
 }

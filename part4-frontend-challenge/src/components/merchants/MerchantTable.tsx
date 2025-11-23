@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Table } from "../common/Table";
 import { useMerchants } from "../../hooks/useMerchants";
 import MerchantFilters from "./MerchantFilters";
@@ -6,6 +7,7 @@ import "./MerchantTable.css";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 
 const MerchantTable = () => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [filters, setFilters] = useState({
@@ -91,6 +93,10 @@ const MerchantTable = () => {
     setCurrentPage(pageNumber);
   };
 
+  const handleRowClick = (merchantId: number) => {
+    navigate(`/merchants/update/${merchantId}`);
+  };
+
   // Generate page numbers to display
   const getPageNumbers = () => {
     const pages = [];
@@ -133,7 +139,9 @@ const MerchantTable = () => {
 
       <div className="merchant-table-container">
         {loading && (
-          <div className="merchant-table-loading"><LoadingSpinner/></div>
+          <div className="merchant-table-loading">
+            <LoadingSpinner />
+          </div>
         )}
 
         {error && (
@@ -167,7 +175,11 @@ const MerchantTable = () => {
                     </tr>
                   ) : (
                     filteredAndSortedMerchants.map((merchant) => (
-                      <tr key={merchant.merchantId}>
+                      <tr
+                        key={merchant.merchantId}
+                        onClick={() => handleRowClick(merchant.merchantId)}
+                        className="merchant-table-row-clickable"
+                      >
                         <td className="merchant-table-cell-id">
                           {merchant.merchantId}
                         </td>
