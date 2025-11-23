@@ -102,9 +102,39 @@ export const updateMerchant = async (
   }
 };
 
+/**
+ * Search merchants by name and/or ID
+ *
+ * @param searchParams - Search parameters (searchName, searchId, page, limit)
+ * @returns Promise with merchant list response data
+ */
+export const searchMerchants = async (searchParams: {
+  searchName?: string;
+  searchId?: string;
+  page?: number;
+  limit?: number;
+}): Promise<MerchantListResponse> => {
+  try {
+    const response = await post<MerchantListResponse>(
+      `${MERCHANT_BASE}/search`,
+      {
+        searchName: searchParams.searchName || "",
+        searchId: searchParams.searchId || "",
+        page: searchParams.page || 1,
+        limit: searchParams.limit || 10,
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error searching merchants:", error);
+    throw error;
+  }
+};
+
 export default {
   getMerchants,
   getMerchantById,
   createMerchant,
   updateMerchant,
+  searchMerchants,
 };

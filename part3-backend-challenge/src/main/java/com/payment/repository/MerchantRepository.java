@@ -15,6 +15,9 @@ public interface MerchantRepository extends CrudRepository<Merchant, Long> {
     Optional<Merchant> findByMerchantId(Long merchantId);
     List<Merchant> findByNameLike(String namePattern);
     
+    // Search methods
+    List<Merchant> findByNameContainsIgnoreCaseOrBusinessNameContainsIgnoreCase(String name, String businessName);
+    
     // Check for duplicates
     Optional<Merchant> findByEmail(String email);
     Optional<Merchant> findByPhone(String phone);

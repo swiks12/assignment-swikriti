@@ -104,6 +104,79 @@ public class MerchantController {
     }
 
     /**
+     * POST /api/v1/merchants/search
+     * Search merchants by name and/or ID
+     */
+    @Post("/search")
+    @Operation(
+        summary = "Search merchants",
+        description = "Search merchants by name and/or merchant ID with pagination"
+    )
+    public HttpResponse<Map<String, Object>> searchMerchants(
+            @Body Map<String, Object> searchRequest
+    ) {
+        try {
+            // Extract search parameters
+            String searchName = searchRequest.containsKey("searchName") 
+                ? (String) searchRequest.get("searchName") : "";
+            String searchId = searchRequest.containsKey("searchId") 
+                ? searchRequest.get("searchId").toString() : "";
+            int page = searchRequest.containsKey("page") 
+                ? ((Number) searchRequest.get("page")).intValue() : 1;
+            int limit = searchRequest.containsKey("limit") 
+                ? ((Number) searchRequest.get("limit")).intValue() : 10;
+            
+            // Get all merchants
+            Iterable<Merchant> allMerchants = merchantRepository.findAll();
+            List<Merchant> merchantList = StreamSupport
+                .stream(allMerchants.spliterator(), false)
+                .collect(Collectors.toList());
+            
+            // Apply search filters
+            if (searchName != null && !searchName.trim().isEmpty()) {
+                String searchNameLower = searchName.toLowerCase();
+                merchantList = merchantList.stream()
+                    .filter(m -> m.getName().toLowerCase().contains(searchNameLower) ||
+                               m.getBusinessName().toLowerCase().contains(searchNameLower))
+                    .collect(Collectors.toList());
+            }
+            
+            if (searchId != null && !searchId.trim().isEmpty()) {
+                merchantList = merchantList.stream()
+                    .filter(m -> m.getMerchantId().toString().contains(searchId))
+                    .collect(Collectors.toList());
+            }
+            
+            // Calculate pagination
+            int totalItems = merchantList.size();
+            int totalPages = (int) Math.ceil((double) totalItems / limit);
+            int startIndex = (page - 1) * limit;
+            int endIndex = Math.min(startIndex + limit, totalItems);
+            
+            // Get paginated data
+            List<Merchant> paginatedMerchants = merchantList.subList(
+                Math.max(0, startIndex), 
+                Math.max(0, endIndex)
+            );
+            
+            return HttpResponse.ok(Map.of(
+                "data", paginatedMerchants,
+                "page", page,
+                "limit", limit,
+                "totalItems", totalItems,
+                "totalPages", totalPages,
+                "hasNextPage", page < totalPages,
+                "hasPrevPage", page > 1
+            ));
+        } catch (Exception e) {
+            return HttpResponse.serverError(Map.of(
+                "message", "Failed to search merchants. Please try again later.",
+                "error", e.getMessage()
+            ));
+        }
+    }
+
+    /**
      * POST /api/v1/merchants
      * Create a new merchant
      */
