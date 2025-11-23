@@ -13,11 +13,17 @@
 
 /* Merchants Page Header */
 .merchants-header-container {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
   margin-bottom: 2rem;
+  padding: 0px 0px 8px 8px;
+  border-bottom: #2424a3 solid 2px;
+  background-color: #f8fafc;
 }
 
 .merchants-header-content h1 {
