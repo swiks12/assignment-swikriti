@@ -1,0 +1,133 @@
+/* Merchant Filters Container */
+.merchant-filters {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Filters Header */
+.merchant-filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.merchant-filters-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.merchant-filters-clear-btn {
+  padding: 0.5rem 1rem;
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: #475569;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.merchant-filters-clear-btn:hover {
+  background-color: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+/* Filters Grid */
+.merchant-filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.25rem;
+}
+
+.merchant-filter-item {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Filter Label */
+.merchant-filter-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 0.5rem;
+}
+
+/* Filter Select */
+.merchant-filter-select {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #334155;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.merchant-filter-select:hover {
+  border-color: #94a3b8;
+}
+
+.merchant-filter-select:focus {
+  border-color: #2424a3;
+  box-shadow: 0 0 0 3px rgba(36, 36, 163, 0.1);
+}
+
+/* Responsive Design - Tablet */
+@media (max-width: 1024px) {
+  .merchant-filters-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Responsive Design - Mobile */
+@media (max-width: 768px) {
+  .merchant-filters {
+    padding: 1rem;
+  }
+
+  .merchant-filters-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .merchant-filters-clear-btn {
+    width: 100%;
+  }
+
+  .merchant-filters-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* Responsive Design - Small Mobile */
+@media (max-width: 480px) {
+  .merchant-filters {
+    padding: 0.875rem;
+    margin-bottom: 1rem;
+  }
+
+  .merchant-filters-title {
+    font-size: 1rem;
+  }
+
+  .merchant-filters-clear-btn {
+    font-size: 0.8125rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .merchant-filter-select {
+    font-size: 0.8125rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
